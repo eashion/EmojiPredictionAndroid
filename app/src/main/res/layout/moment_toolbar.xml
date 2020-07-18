@@ -13,30 +13,23 @@
         android:layout_height="20dp"/>
 
     <RelativeLayout
-        android:id="@+id/common_toolbar"
+        android:id="@+id/moment_toolbar"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="#fff"
-        app:contentInsetStart="0dp">
+        android:background="#fff">
 
 
-        <RelativeLayout
-            android:id="@+id/common_toolbar_back"
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-              >
-
-            <ImageView
-                android:id="@+id/common_toolbar_back_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="30px"
-                android:layout_marginRight="30px"
-                android:src="@mipmap/ic_title_back" />
-
-        </RelativeLayout>
+            android:ellipsize="end"
+            android:maxLength="10"
+            android:singleLine="true"
+            android:text="返回"
+            android:textColor="#333"
+            android:layout_marginLeft="10dp"
+            android:textSize="16dp" />
 
         <TextView
             android:id="@+id/common_toolbar_title"
@@ -46,9 +39,23 @@
             android:ellipsize="end"
             android:maxLength="10"
             android:singleLine="true"
-            android:text="爸爸"
+            android:text="发表动态"
             android:textColor="#333"
              android:textSize="16dp" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:ellipsize="end"
+            android:maxLength="10"
+            android:singleLine="true"
+            android:text="发送"
+            android:textColor="#333"
+            android:textSize="16dp" />
 
 
 

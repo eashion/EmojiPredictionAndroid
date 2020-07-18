@@ -3,12 +3,10 @@ package com.hrl.chaui.util;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Rect;
 import android.os.Build;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.GridLayoutManager;
@@ -27,11 +25,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.hrl.chaui.R;
-import com.hrl.chaui.activity.MomentActivity;
 import com.hrl.chaui.emoji.EmojiAdapter;
 import com.hrl.chaui.emoji.EmojiBean;
 import com.hrl.chaui.emoji.EmojiDao;
@@ -43,7 +39,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ChatUiHelper {
+public class MomentUiHelper {
     private static final String SHARE_PREFERENCE_NAME = "com.chat.ui";
     private static final String SHARE_PREFERENCE_TAG = "soft_input_height";
     private Activity mActivity;
@@ -51,26 +47,19 @@ public class ChatUiHelper {
     private RelativeLayout mBottomLayout;//底部布局
     private LinearLayout mEmojiLayout;//表情布局
     private LinearLayout mEmojiSuggestionLayout;//表情推荐布局
-    private LinearLayout mAddLayout;//添加布局
-    private Button mSendBtn;//发送按钮
-    private View mAddButton;//加号按钮
-    private Button mAudioButton;//录音按钮
-    private ImageView mAudioIv;//录音图片
 
 
     private EditText mEditText;
-    private EditText mEmojiSuggestionEditText;
     private InputMethodManager mInputManager;
     private SharedPreferences mSp;
-    private ImageView mIvEmoji;//表情按钮
-    private ImageView mIvBack;//表情按钮
+    private ImageView mIvEmoji;
 
-    public ChatUiHelper() {
+    public MomentUiHelper() {
 
     }
 
-    public static ChatUiHelper with(Activity activity) {
-        ChatUiHelper mChatUiHelper = new ChatUiHelper();
+    public static MomentUiHelper with(Activity activity) {
+        MomentUiHelper mChatUiHelper = new MomentUiHelper();
         //   AndroidBug5497Workaround.assistActivity(activity);
         mChatUiHelper.mActivity = activity;
         mChatUiHelper.mInputManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -83,7 +72,7 @@ public class ChatUiHelper {
     private List<EmojiBean> mListEmoji;
     private List<EmojiBean> mEmojiSuggestionList;
 
-    public ChatUiHelper bindEmojiData(final Activity activity) {
+    public MomentUiHelper bindEmojiData(final Activity activity) {
 
         mListEmoji = EmojiDao.getInstance().getEmojiBean();
         LogUtil.d("获取到的表情集合"+Arrays.asList(mListEmoji));
@@ -150,6 +139,8 @@ public class ChatUiHelper {
                         // 将光标设置到新增完表情的右侧
                         mEditText.setSelection(curPosition + emotionId.length());
                     }
+
+
                 }
             });
             recyclerView.setAdapter(entranceAdapter);
@@ -168,7 +159,7 @@ public class ChatUiHelper {
         return this;
     }
 
-    public ChatUiHelper bindEmojiSuggestionData(final Activity activity) {
+    public MomentUiHelper bindEmojiSuggestionData(final Activity activity) {
 
         mEmojiSuggestionList = EmojiDao.getInstance().getEmojiSuggestionBean();
         LogUtil.d("获取到的表情集合"+Arrays.asList(mEmojiSuggestionList));
@@ -224,14 +215,14 @@ public class ChatUiHelper {
 
 
     //绑定整体界面布局
-    public ChatUiHelper bindContentLayout(LinearLayout bottomLayout) {
+    public MomentUiHelper bindContentLayout(LinearLayout bottomLayout) {
         mContentLayout = bottomLayout;
         return this;
     }
 
 
     //绑定输入框
-    public ChatUiHelper bindEditText(EditText editText) {
+    public MomentUiHelper bindEditText(EditText editText) {
         mEditText = editText;
         mEditText.requestFocus();
         mEditText.setOnTouchListener(new View.OnTouchListener() {
@@ -261,13 +252,7 @@ public class ChatUiHelper {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (mEditText.getText().toString().trim().length() > 0) {
-                    mSendBtn.setVisibility(View.VISIBLE);
-                    mAddButton.setVisibility(View.GONE);
-                } else {
-                    mSendBtn.setVisibility(View.GONE);
-                    mAddButton.setVisibility(View.VISIBLE);
-                }
+                LogUtil.d("Here we detect text changed!");
             }
 
             @Override
@@ -279,114 +264,34 @@ public class ChatUiHelper {
     }
 
     //绑定底部布局
-    public ChatUiHelper bindBottomLayout(RelativeLayout bottomLayout) {
+    public MomentUiHelper bindBottomLayout(RelativeLayout bottomLayout) {
         mBottomLayout = bottomLayout;
         return this;
     }
 
     //绑定表情布局
-    public ChatUiHelper bindEmojiLayout(LinearLayout emojiLayout) {
+    public MomentUiHelper bindEmojiLayout(LinearLayout emojiLayout) {
         mEmojiLayout = emojiLayout;
         return this;
     }
 
     //绑定表情推荐布局
-    public ChatUiHelper bindEmojiSuggestionLayout(LinearLayout emojiSuggestionLayout) {
+    public MomentUiHelper bindEmojiSuggestionLayout(LinearLayout emojiSuggestionLayout) {
         mEmojiSuggestionLayout = emojiSuggestionLayout;
-        return this;
-    }
-
-    //绑定添加布局
-    public ChatUiHelper bindAddLayout(LinearLayout addLayout) {
-        mAddLayout = addLayout;
-        return this;
-    }
-
-    //绑定发送按钮
-    public ChatUiHelper bindttToSendButton(Button sendbtn) {
-        mSendBtn = sendbtn;
-        return this;
-    }
-
-
-    //绑定语音按钮点击事件
-    public ChatUiHelper bindAudioBtn(RecordButton audioBtn) {
-        mAudioButton = audioBtn;
-        return this;
-    }
-
-    //绑定语音图片点击事件
-    public ChatUiHelper bindAudioIv(ImageView audioIv) {
-        mAudioIv = audioIv;
-        audioIv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //如果录音按钮显示
-                if (mAudioButton.isShown()) {
-                    hideAudioButton();
-                    mEditText.requestFocus();
-                    showSoftInput();
-
-                } else {
-                    mEditText.clearFocus();
-                    showAudioButton();
-                    hideEmotionLayout();
-                    hideMoreLayout();
-                }
-            }
-        });
-
-        // UIUtils.postTaskDelay(() -> mRvMsg.smoothMoveToPosition(mRvMsg.getAdapter().getItemCount() - 1), 50);
-        return this;
-    }
-
-    private void hideAudioButton() {
-        mAudioButton.setVisibility(View.GONE);
-        mEditText.setVisibility(View.VISIBLE);
-        mAudioIv.setImageResource(R.mipmap.ic_audio);
-    }
-
-
-    private void showAudioButton() {
-        mAudioButton.setVisibility(View.VISIBLE);
-        mEditText.setVisibility(View.GONE);
-        mAudioIv.setImageResource(R.mipmap.ic_keyboard);
-        if (mBottomLayout.isShown()) {
-            hideBottomLayout(false);
-        } else {
-            hideSoftInput();
-        }
-    }
-
-    public ChatUiHelper bindBackButton(final Activity activity, ImageView backBtn) {
-        mIvBack = backBtn;
-        mIvBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                LogUtil.d("here we detect click back button");
-                Intent intent = new Intent(activity, MomentActivity.class);
-                activity.startActivity(intent);
-            }
-        });
         return this;
     }
 
 
     //绑定表情按钮点击事件
-    public ChatUiHelper bindToEmojiButton(ImageView emojiBtn) {
+    public MomentUiHelper bindToEmojiButton(ImageView emojiBtn) {
         mIvEmoji = emojiBtn;
         emojiBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mEditText.clearFocus();
                 if (!mEmojiLayout.isShown()) {
-                    if (mAddLayout.isShown()) {
-                        showEmotionLayout();
-                        hideMoreLayout();
-                        hideAudioButton();
-                        return;
-                    }
-                } else if (mEmojiLayout.isShown() && !mAddLayout.isShown()) {
+                    showEmotionLayout();
+                } else if (mEmojiLayout.isShown()) {
                     mIvEmoji.setImageResource(R.mipmap.ic_emoji);
                     if (mBottomLayout.isShown()) {
                         lockContentHeight();//显示软件盘时，锁定内容高度，防止跳闪。
@@ -400,25 +305,6 @@ public class ChatUiHelper {
                         } else {
                             showBottomLayout();//两者都没显示，直接显示表情布局
                         }
-                    }
-
-
-                    return;
-                }
-                showEmotionLayout();
-                hideMoreLayout();
-                hideAudioButton();
-                if (mBottomLayout.isShown()) {
-                    lockContentHeight();//显示软件盘时，锁定内容高度，防止跳闪。
-                    hideBottomLayout(true);//隐藏表情布局，显示软件盘
-                    unlockContentHeightDelayed();//软件盘显示后，释放内容高度
-                } else {
-                    if (isSoftInputShown()) {//同上
-                        lockContentHeight();
-                        showBottomLayout();
-                        unlockContentHeightDelayed();
-                    } else {
-                        showBottomLayout();//两者都没显示，直接显示表情布局
                     }
                 }
             }
@@ -442,51 +328,6 @@ public class ChatUiHelper {
             }
         });
         return this;
-    }
-
-
-    //绑定底部加号按钮
-    public ChatUiHelper bindToAddButton(View addButton) {
-        mAddButton = addButton;
-        addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                 mEditText.clearFocus();
-                 hideAudioButton();
-                 if (mBottomLayout.isShown()){
-                  if (mAddLayout.isShown()){
-                      lockContentHeight();//显示软件盘时，锁定内容高度，防止跳闪。
-                      hideBottomLayout(true);//隐藏表情布局，显示软件盘
-                      unlockContentHeightDelayed();//软件盘显示后，释放内容高度
-                  }else{
-                      showMoreLayout();
-                      hideEmotionLayout();
-                  }
-              }else{
-                  if (isSoftInputShown()) {//同上
-                      hideEmotionLayout();
-                      showMoreLayout();
-                      lockContentHeight();
-                      showBottomLayout();
-                      unlockContentHeightDelayed();
-                  } else {
-                       showMoreLayout();
-                       hideEmotionLayout();
-                       showBottomLayout();//两者都没显示，直接显示表情布局
-                  }
-              }
-            }
-        });
-        return this;
-    }
-
-
-    private void hideMoreLayout() {
-        mAddLayout.setVisibility(View.GONE);
-    }
-
-    private void showMoreLayout() {
-        mAddLayout.setVisibility(View.VISIBLE);
     }
 
 
@@ -516,6 +357,7 @@ public class ChatUiHelper {
 
 
     private void showEmotionLayout() {
+        mBottomLayout.setVisibility(View.VISIBLE);
         mEmojiLayout.setVisibility(View.VISIBLE);
         mIvEmoji.setImageResource(R.mipmap.ic_keyboard);
     }

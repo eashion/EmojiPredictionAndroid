@@ -1,8 +1,11 @@
 package com.hrl.chaui.bean;
 
 
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+
 public class TextMsgBody extends MsgBody {
-     private String message;
+     private SpannableStringBuilder message;
      private String extra;
 
     public String getExtra() {
@@ -15,15 +18,15 @@ public class TextMsgBody extends MsgBody {
     public TextMsgBody() {
     }
 
-    public TextMsgBody(String message) {
+    public TextMsgBody(SpannableStringBuilder message) {
         this.message = message;
     }
 
-    public String getMessage() {
+    public SpannableStringBuilder getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
+    public void setMessage(SpannableStringBuilder message) {
         this.message = message;
     }
 

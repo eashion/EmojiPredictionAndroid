@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <include layout="@layout/moment_toolbar" />
+
+    <LinearLayout
+        android:id="@+id/ll_moment_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        >
+
+        <EditText
+            android:id="@+id/et_emotion"
+            android:layout_width="match_parent"
+            android:layout_height="230dp"
+            android:background="@drawable/message_shap_chat_bg"
+            android:gravity="top"
+            android:textSize="15sp"
+            android:inputType="textMultiLine"
+        />
+
+        <include layout="@layout/moment_emojibar" />
+
+        <!--表情推荐-->
+        <include
+            android:id="@+id/rlEmotionSuggestion"
+            layout="@layout/include_emoji_suggestion_layout"
+            android:visibility="gone" />
+
+        <FrameLayout
+            android:id="@+id/fl_emotionview_main"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/moment_bottom_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone">
+
+        <!--表情-->
+        <include
+            android:id="@+id/moment_rlEmotion"
+            layout="@layout/include_emoji_layout"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
+</LinearLayout>

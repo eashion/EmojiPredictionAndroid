@@ -2,6 +2,7 @@ package com.hrl.chaui.adapter;
 
 import android.content.Context;
 import android.graphics.drawable.AnimationDrawable;
+import android.text.SpannableString;
 import android.text.TextUtils;
 import android.widget.ImageView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -50,9 +51,6 @@ public class ChatAdapter extends BaseQuickAdapter<Message,BaseViewHolder> {
     /*
     private static final int SEND_LOCATION = R.layout.item_location_send;
     private static final int RECEIVE_LOCATION = R.layout.item_location_receive;*/
-
-
-
 
 
     public ChatAdapter(Context context, List<Message> data) {
@@ -123,8 +121,6 @@ public class ChatAdapter extends BaseQuickAdapter<Message,BaseViewHolder> {
                 } else if (sentStatus == MsgSendStatus.SENT) {
                     helper.setVisible(R.id.chat_item_progress, false).setVisible(R.id.chat_item_fail, false);
                 }
-            } else {
-
             }
         }
 

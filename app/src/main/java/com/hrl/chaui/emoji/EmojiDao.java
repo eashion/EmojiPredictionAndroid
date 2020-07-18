@@ -3,6 +3,8 @@ package com.hrl.chaui.emoji;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import com.hrl.chaui.MyApplication;
+import com.hrl.chaui.util.EmojiUtils;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -41,13 +43,30 @@ public class EmojiDao {
 
     public List<EmojiBean> getEmojiBean(){
         List<EmojiBean> emojiBeanList = new ArrayList<EmojiBean>();
-        SQLiteDatabase db = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.OPEN_READONLY);
-        Cursor cursor = db.query("emoji", new String[]{"unicodeInt","_id"}, null, null, null, null, null);
-        while (cursor.moveToNext()){
+        List<String> emojiIds = EmojiUtils.getEmojiIds();
+        for(String id : emojiIds){
             EmojiBean bean = new EmojiBean();
-            int unicodeInt = cursor.getInt(0);
-            int id = cursor.getInt(1);
-            bean.setUnicodeInt(unicodeInt);
+            bean.setId(id);
+            emojiBeanList.add(bean);
+        }
+//        SQLiteDatabase db = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.OPEN_READONLY);
+//        Cursor cursor = db.query("emoji", new String[]{"unicodeInt","_id"}, null, null, null, null, null);
+//        while (cursor.moveToNext()){
+//            EmojiBean bean = new EmojiBean();
+//            int unicodeInt = cursor.getInt(0);
+//            int id = cursor.getInt(1);
+//            bean.setUnicodeInt(unicodeInt);
+//            bean.setId(id);
+//            emojiBeanList.add(bean);
+//        }
+        return emojiBeanList;
+    }
+
+    public List<EmojiBean> getEmojiSuggestionBean(){
+        List<EmojiBean> emojiBeanList = new ArrayList<EmojiBean>();
+        List<String> emojiIds = EmojiUtils.getEmojiSuggestionIds();
+        for(String id : emojiIds){
+            EmojiBean bean = new EmojiBean();
             bean.setId(id);
             emojiBeanList.add(bean);
         }

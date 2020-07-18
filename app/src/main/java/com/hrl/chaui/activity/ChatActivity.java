@@ -5,16 +5,15 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.AnimationDrawable;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableStringBuilder;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -23,19 +22,19 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.hrl.chaui.adapter.ChatAdapter;
-import com.hrl.chaui.bean.MsgType;
-import com.hrl.chaui.util.LogUtil;
-import com.hrl.chaui.bean.Message;
 import com.hrl.chaui.R;
+import com.hrl.chaui.adapter.ChatAdapter;
 import com.hrl.chaui.bean.AudioMsgBody;
 import com.hrl.chaui.bean.FileMsgBody;
 import com.hrl.chaui.bean.ImageMsgBody;
+import com.hrl.chaui.bean.Message;
 import com.hrl.chaui.bean.MsgSendStatus;
+import com.hrl.chaui.bean.MsgType;
 import com.hrl.chaui.bean.TextMsgBody;
 import com.hrl.chaui.bean.VideoMsgBody;
 import com.hrl.chaui.util.ChatUiHelper;
 import com.hrl.chaui.util.FileUtils;
+import com.hrl.chaui.util.LogUtil;
 import com.hrl.chaui.util.PictureFileUtil;
 import com.hrl.chaui.widget.MediaManager;
 import com.hrl.chaui.widget.RecordButton;
@@ -68,7 +67,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
     @BindView(R.id.ivAdd)
     ImageView mIvAdd;
     @BindView(R.id.ivEmo)
-    ImageView mIvEmo;
+    ImageView mIvEmo;//表情按钮
     @BindView(R.id.btn_send)
     StateButton mBtnSend;//发送按钮
     @BindView(R.id.ivAudio)
@@ -77,6 +76,8 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
     RecordButton mBtnAudio;//录音按钮
     @BindView(R.id.rlEmotion)
     LinearLayout mLlEmotion;//表情布局
+    @BindView(R.id.rlEmotionSuggestion)
+    LinearLayout mLlEmotionSuggestion;//表情推荐布局
     @BindView(R.id.llAdd)
     LinearLayout mLlAdd;//添加布局
     @BindView(R.id.swipe_chat)
@@ -145,13 +146,6 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
                 }
             }
         });
-        mLlEmotion.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                System.out.println("we catch long click");
-                return true;
-            }
-        });
     }
 
 
@@ -162,7 +156,7 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
         //构建文本消息
         Message mMessgaeText = getBaseReceiveMessage(MsgType.TEXT);
         TextMsgBody mTextMsgBody = new TextMsgBody();
-        mTextMsgBody.setMessage("今天上班怎么样啊？");
+        mTextMsgBody.setMessage(new SpannableStringBuilder("今天上班怎么样啊？"));
         mMessgaeText.setBody(mTextMsgBody);
         mReceiveMsgList.add(mMessgaeText);
         //构建图片消息
@@ -191,12 +185,14 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
                 .bindEditText(mEtContent)
                 .bindBottomLayout(mRlBottomLayout)
                 .bindEmojiLayout(mLlEmotion)
+                .bindEmojiSuggestionLayout(mLlEmotionSuggestion)
                 .bindAddLayout(mLlAdd)
                 .bindToAddButton(mIvAdd)
                 .bindToEmojiButton(mIvEmo)
                 .bindAudioBtn(mBtnAudio)
                 .bindAudioIv(mIvAudio)
-                .bindEmojiData();
+                .bindEmojiData(this)
+                .bindEmojiSuggestionData(this);
         //底部布局弹出,聊天列表上滑
         mRvChat.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
@@ -235,15 +231,15 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
                 }
             }
         });
-
     }
 
-    @OnClick({R.id.btn_send, R.id.rlPhoto, R.id.rlVideo, R.id.rlLocation, R.id.rlFile})
+    @OnClick({R.id.btn_send, R.id.rlPhoto, R.id.rlVideo, R.id.rlLocation, R.id.rlFile, R.id.common_toolbar_back_btn})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_send:
-                sendTextMsg(mEtContent.getText().toString());
+                sendTextMsg((SpannableStringBuilder) mEtContent.getText());
                 mEtContent.setText("");
+                mLlEmotionSuggestion.setVisibility(View.GONE);
                 break;
             case R.id.rlPhoto:
                 PictureFileUtil.openGalleryPic(ChatActivity.this, REQUEST_CODE_IMAGE);
@@ -253,6 +249,9 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
                 break;
             case R.id.rlFile:
                 PictureFileUtil.openFile(ChatActivity.this, REQUEST_CODE_FILE);
+                break;
+            case R.id.common_toolbar_back_btn:
+                startActivity(new Intent(ChatActivity.this, MomentActivity.class));
                 break;
             case R.id.rlLocation:
                 break;
@@ -292,10 +291,10 @@ public class ChatActivity extends AppCompatActivity implements SwipeRefreshLayou
 
 
     //文本消息
-    private void sendTextMsg(String hello) {
+    private void sendTextMsg(SpannableStringBuilder msg) {
         final Message mMessgae = getBaseSendMessage(MsgType.TEXT);
         TextMsgBody mTextMsgBody = new TextMsgBody();
-        mTextMsgBody.setMessage(hello);
+        mTextMsgBody.setMessage(msg);
         mMessgae.setBody(mTextMsgBody);
         //开始发送
         mAdapter.addData(mMessgae);
